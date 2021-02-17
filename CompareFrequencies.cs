@@ -26,7 +26,7 @@ namespace CompareFrequencies
 
         public string PluginName { get; } = "Compare Frequencies";
         public string PluginType { get; } = "Corpus Tools";
-        public string PluginVersion { get; } = "1.0.2";
+        public string PluginVersion { get; } = "1.1.0";
         public string PluginAuthor { get; } = "Ryan L. Boyd (ryan@ryanboyd.io)";
         public string PluginDescription { get; } = "Compare n-gram frequencies from two BUTTER frequency lists. This plugin will calculate metrics that help you to see and understand " +
                                                    "the relative n-gram differences between two copora. Metrics calculated include Log Likelihood (LL), %DIFF, Bayes Factors (BIC), " +
@@ -57,6 +57,7 @@ namespace CompareFrequencies
         private string OutputFileDelimiter = ",";
         private string OutputFileQuote = "\"";
         private ulong CurrentNgramCount { get; set; } = 0;
+        private bool omitZeroes { get; set; } = true;
 
 
 
@@ -65,7 +66,7 @@ namespace CompareFrequencies
         {
 
             using (var form = new SettingsForm_CompareFrequencies(OutputLocation, OutputFileEncoding, OutputFileQuote, OutputFileDelimiter, SettingsFormQuotes, SettingsFormDelimiter,
-                                                                   SettingsFormEncoding, CorporaFileDetails))
+                                                                   SettingsFormEncoding, CorporaFileDetails, omitZeroes))
             {
                 form.Icon = Properties.Resources.icon;
                 form.Text = PluginName;
@@ -81,6 +82,7 @@ namespace CompareFrequencies
                     SettingsFormDelimiter = form.SettingsForm_Delimiter;
                     SettingsFormEncoding = form.SettingsForm_SelectedEncoding;
                     CorporaFileDetails = form.CorpPropList;
+                    omitZeroes = form.omitZeroFromOutput;
                 }
             }
 
@@ -267,7 +269,7 @@ namespace CompareFrequencies
                     {
 
 
-                        ComparisonMetrics metrics = new ComparisonMetrics(key, Ranks[key], Frequencies[key], numComparisons, corporaSizes);
+                        ComparisonMetrics metrics = new ComparisonMetrics(key, Ranks[key], Frequencies[key], numComparisons, corporaSizes, omitZeroes);
                         string[] OutputArr = metrics.GetOutput();
                         string[] outputRow = new string[OutputArr.Length + 1];
                         outputRow[0] = key;
@@ -356,6 +358,8 @@ namespace CompareFrequencies
             OutputFileQuote = SettingsDict["OutputFileQuote"];
             int NumberOfCorpora = Convert.ToInt32(SettingsDict["NumberOfCorpora"]);
 
+            omitZeroes = Boolean.Parse(SettingsDict["omitZeroes"]);
+
             CorporaFileDetails = new List<CorpusProperties>();
 
             for (int i = 0; i < NumberOfCorpora; i++)
@@ -390,6 +394,7 @@ namespace CompareFrequencies
             SettingsDict["OutputFileQuote"] = OutputFileQuote;
 
             SettingsDict["NumberOfCorpora"] = CorporaFileDetails.Count.ToString();
+            SettingsDict["omitZeroes"] = omitZeroes.ToString();
 
 
             for (int i = 0; i < CorporaFileDetails.Count; i++)

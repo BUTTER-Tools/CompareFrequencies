@@ -9,6 +9,8 @@ namespace CompareFrequencies
     class ComparisonMetrics
     {
 
+        private const decimal zeroReplace = (decimal)0.000001;
+
         private decimal[] freqs;
         private decimal[] ranks;
         private ulong[] corporaSizes;
@@ -21,7 +23,7 @@ namespace CompareFrequencies
         public decimal[] OR { get; }
 
 
-        public ComparisonMetrics(string ngram, ulong[] rankarray, ulong[] freqarray, int numComparisons, ulong[] corporaSizeArr)
+        public ComparisonMetrics(string ngram, ulong[] rankarray, ulong[] freqarray, int numComparisons, ulong[] corporaSizeArr, bool omitZeroes)
         {
             freqs = new decimal[freqarray.Length];
             ranks = new decimal[rankarray.Length];
@@ -55,12 +57,12 @@ namespace CompareFrequencies
 
             
 
-            this.Calculate(ngram, freqs.Length);
+            this.Calculate(ngram, freqs.Length, omitZeroes);
         }
 
 
 
-        private void Calculate(string ngram, int numCorpora)
+        private void Calculate(string ngram, int numCorpora, bool omitZeroes)
         {
             
             int comparisonNumber = 0;
@@ -68,15 +70,40 @@ namespace CompareFrequencies
             for (int i = 0; i < numCorpora; i++)
             {
 
-                if (freqs[i] == 0 || corporaSizes[i] == 0) continue;
+                if (corporaSizes[i] == 0) continue;
 
                 for (int j = i + 1; j < numCorpora; j++)
                 {
 
-                    if (freqs[j] ==0 || corporaSizes[j] == 0) continue;
+                    if (corporaSizes[j] == 0) continue;
 
-                    decimal expectedFreq_1 = corporaSizes[i] * (freqs[i] + freqs[j]) / (corporaSizes[i] + corporaSizes[j]);
-                    decimal expectedFreq_2 = corporaSizes[j] * (freqs[i] + freqs[j]) / (corporaSizes[i] + corporaSizes[j]);
+
+
+                    decimal observedFreq_1;
+                    decimal observedFreq_2;
+
+                    if (freqs[i] != 0)
+                    {
+                        observedFreq_1 = freqs[i];
+                    }
+                    else
+                    {
+                        if (omitZeroes) continue;
+                        observedFreq_1 = zeroReplace;
+                    }
+                    if (freqs[j] != 0)
+                    {
+                        observedFreq_2 = freqs[j];
+                    }
+                    else
+                    {
+                        if (omitZeroes) continue;
+                        observedFreq_2 = zeroReplace;
+                    }
+
+
+                    decimal expectedFreq_1 = corporaSizes[i] * (observedFreq_1 + observedFreq_2) / (corporaSizes[i] + corporaSizes[j]);
+                    decimal expectedFreq_2 = corporaSizes[j] * (observedFreq_1 + observedFreq_2) / (corporaSizes[i] + corporaSizes[j]);
 
                     decimal smallerExpectedFreq = 0;
                     if (expectedFreq_1 < expectedFreq_2)
@@ -87,19 +114,19 @@ namespace CompareFrequencies
                     {
                         smallerExpectedFreq = expectedFreq_2;
                     }
-                    
-                    LL[comparisonNumber] = 2 * ((freqs[i] * (decimal)Math.Log((double)(freqs[i] / expectedFreq_1))) + (freqs[j] * (decimal)Math.Log((double)(freqs[j] / expectedFreq_2))));
-                    DIFF[comparisonNumber] = (((freqs[i] / corporaSizes[i]) - (freqs[j] / corporaSizes[j])) * 100) / (freqs[j] / corporaSizes[j]);
+
+                    LL[comparisonNumber] = 2 * ((observedFreq_1 * (decimal)Math.Log((double)(observedFreq_1 / expectedFreq_1))) + (observedFreq_2 * (decimal)Math.Log((double)(observedFreq_2 / expectedFreq_2))));
+                    DIFF[comparisonNumber] = (((observedFreq_1 / corporaSizes[i]) - (observedFreq_2 / corporaSizes[j])) * 100) / (observedFreq_2 / corporaSizes[j]);
                     BIC[comparisonNumber] = LL[comparisonNumber] - (decimal)(1 * Math.Log(corporaSizes[i] + corporaSizes[j]));
                     ELL[comparisonNumber] = LL[comparisonNumber] / (decimal)((corporaSizes[i] + corporaSizes[j]) * Math.Log((double)smallerExpectedFreq));
-                    RR[comparisonNumber] = (freqs[i] / corporaSizes[i]) / (freqs[j] / corporaSizes[j]);
-                    OR[comparisonNumber] = (decimal)((freqs[i] / (corporaSizes[i] - freqs[i])) / (freqs[j] / (corporaSizes[j] - freqs[j])));
+                    RR[comparisonNumber] = (observedFreq_1 / corporaSizes[i]) / (observedFreq_2 / corporaSizes[j]);
+                    OR[comparisonNumber] = (decimal)((observedFreq_1 / (corporaSizes[i] - observedFreq_1)) / (observedFreq_2 / (corporaSizes[j] - observedFreq_2)));
 
                     decimal LR_numerator = 0.5m;
                     decimal LR_denominator = 0.5m;
-                    if (freqs[i] > 0 && corporaSizes[i] > 0) LR_numerator = freqs[i] / corporaSizes[i];
-                    if (freqs[j] > 0 && corporaSizes[j] > 0) LR_denominator = freqs[j] / corporaSizes[j];
 
+                    LR_numerator = observedFreq_1 / corporaSizes[i];
+                    LR_denominator = observedFreq_2 / corporaSizes[j];
                     LR[comparisonNumber] = (decimal)Math.Log((double)LR_numerator / (double)LR_denominator, 2);
 
                     comparisonNumber++;

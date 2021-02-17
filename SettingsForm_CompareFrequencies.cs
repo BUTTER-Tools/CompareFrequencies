@@ -24,13 +24,16 @@ namespace CompareFrequencies
         public string OutputFileQuote { get; set; }
         public string OutputFileDelimiter { get; set; }
         public List<CorpusProperties> CorpPropList { get; set; }
+
+        public bool omitZeroFromOutput { get; set; }
         #endregion
 
 
 
         public SettingsForm_CompareFrequencies(string OutputFileLoc, string OutputFileEncode, string OutputFileQuoteChar, string OutputFileDelimitChar,
                                                 string SettingFormQuote, string SettingFormDelimiter, string SettingFormEncode,
-                                                List<CorpusProperties> CorpProp)
+                                                List<CorpusProperties> CorpProp,
+                                                bool omitZeroIn)
         {
             InitializeComponent();
 
@@ -78,6 +81,9 @@ namespace CompareFrequencies
                 IncludedCorporaListBox.Items.Add(item.Name);
             }
 
+
+            skipZeroesCheckbox.Checked = omitZeroIn;
+            
 
 
         }
@@ -169,6 +175,7 @@ namespace CompareFrequencies
             this.SettingsForm_SelectedEncoding = EncodingDropdown.SelectedItem.ToString();
             this.OutputFileLocation = OutputFileTextbox.Text;
             this.OutputFileSelectedEncoding = OutputFileEncodingDropdown.SelectedItem.ToString();
+            this.omitZeroFromOutput = skipZeroesCheckbox.Checked;
 
             if (CSVQuoteTextbox.Text.Length > 0)
             {
@@ -298,7 +305,6 @@ namespace CompareFrequencies
                 IncludedCorporaListBox.Items.RemoveAt(IncludedCorporaListBox.SelectedIndex);
             }
         }
-
 
 
     }

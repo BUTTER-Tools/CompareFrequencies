@@ -53,8 +53,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.skipZeroesCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.OutputSettingsGroupbox.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // SetOutputFileButton
@@ -324,12 +327,35 @@
             this.label7.TabIndex = 30;
             this.label7.Text = "CSV Delimiter:";
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.skipZeroesCheckbox);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Location = new System.Drawing.Point(496, 373);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(441, 166);
+            this.groupBox2.TabIndex = 34;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Corpus Comparison Statistics Settings";
+            // 
+            // skipZeroesCheckbox
+            // 
+            this.skipZeroesCheckbox.AutoSize = true;
+            this.skipZeroesCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.skipZeroesCheckbox.Location = new System.Drawing.Point(7, 36);
+            this.skipZeroesCheckbox.Name = "skipZeroesCheckbox";
+            this.skipZeroesCheckbox.Size = new System.Drawing.Size(295, 20);
+            this.skipZeroesCheckbox.TabIndex = 0;
+            this.skipZeroesCheckbox.Text = "Skip comparisons with zero-frequency values";
+            this.skipZeroesCheckbox.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm_CompareFrequencies
             // 
             this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(962, 709);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.OutputSettingsGroupbox);
             this.Controls.Add(this.RemoveCorpusButton);
             this.Controls.Add(this.label3);
@@ -345,6 +371,8 @@
             this.groupBox1.PerformLayout();
             this.OutputSettingsGroupbox.ResumeLayout(false);
             this.OutputSettingsGroupbox.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -376,5 +404,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox skipZeroesCheckbox;
     }
 }
