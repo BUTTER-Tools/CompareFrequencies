@@ -9,7 +9,7 @@ namespace CompareFrequencies
     class ComparisonMetrics
     {
 
-        private const decimal zeroReplace = (decimal)0.000001;
+        private const decimal zeroReplace = (decimal)0.5; //using a replacement of 0.5 for the Frequency to be consistent with the UCREL page
 
         private decimal[] freqs;
         private decimal[] ranks;

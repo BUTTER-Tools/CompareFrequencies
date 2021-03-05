@@ -26,11 +26,16 @@ namespace CompareFrequencies
 
         public string PluginName { get; } = "Compare Frequencies";
         public string PluginType { get; } = "Corpus Tools";
-        public string PluginVersion { get; } = "1.1.0";
+        public string PluginVersion { get; } = "1.1.01";
         public string PluginAuthor { get; } = "Ryan L. Boyd (ryan@ryanboyd.io)";
         public string PluginDescription { get; } = "Compare n-gram frequencies from two BUTTER frequency lists. This plugin will calculate metrics that help you to see and understand " +
                                                    "the relative n-gram differences between two copora. Metrics calculated include Log Likelihood (LL), %DIFF, Bayes Factors (BIC), " +
-                                                   "Effect Size for Log Likelihood (ELL), Relative Risk (RRisk), Log Ratio, and Odds Ratio.";
+                                                   "Effect Size for Log Likelihood (ELL), Relative Risk (RRisk), Log Ratio, and Odds Ratio." + Environment.NewLine + Environment.NewLine +
+                                                   "For quick testing heuristics, you can interpret the Log Likelihood (LL) score along the following p-value table:" + Environment.NewLine +
+                                                    "\tLL >= 3.84, p < .05" + Environment.NewLine +
+                                                    "\tLL >= 6.63, p < .01" + Environment.NewLine +
+                                                    "\tLL >= 10.83, p < .001" + Environment.NewLine +
+                                                    "\tLL >= 15.13, p < .0001";
         public string PluginTutorial { get; } = "Coming Soon";
         public bool TopLevel { get; } = true;
         public string StatusToReport { get; set; } = "";
